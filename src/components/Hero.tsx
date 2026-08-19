@@ -76,12 +76,13 @@ export default function Hero() {
           {/* Left content */}
           <div style={{ animation: 'fadeUp 0.8s ease both' }}>
             {/* Logo grande */}
-            <div style={{ marginBottom: 24 }}>
+            <div style={{ marginBottom: 28 }}>
               <img
                 src={logoIntiCloud}
                 alt="IntiCloud"
                 style={{
-                  height: isMobile ? 120 : 160,
+                  height: isMobile ? 180 : 260,
+                  maxWidth: '100%',
                   width: 'auto',
                   objectFit: 'contain',
                   display: 'block',

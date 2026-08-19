@@ -1,7 +1,8 @@
 {
-  "description": "Streamline project management with intuitive task tracking and collaboration tools designed for teams to enhance productivity and communication.",
+  "title": "IntiCloud — Desarrollo Web & Tecnología",
+  "description": "Construimos experiencias digitales modernas, rápidas y funcionales que hacen crecer tu negocio.",
   "robots": {
-    "index": false
+    "index": true
   },
   "accessibility": {
     "addBypassLinks": false,
