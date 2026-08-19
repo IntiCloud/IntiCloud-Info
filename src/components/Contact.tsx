@@ -29,10 +29,10 @@ export default function Contact() {
     setStatus('submitting')
     setApiError(null)
 
-    const accessKey = import.meta.env.VITE_WEB3FORMS_KEY || 'YOUR_WEB3FORMS_ACCESS_KEY'
+    const accessKey = import.meta.env.VITE_WEB3FORMS_KEY || '5435c691-1102-495c-8831-1c2cc51893e2'
 
     try {
-      if (accessKey && accessKey !== 'YOUR_WEB3FORMS_ACCESS_KEY') {
+      if (accessKey) {
         const res = await fetch('https://api.web3forms.com/submit', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
