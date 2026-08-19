@@ -26,7 +26,7 @@ export default function Footer() {
             <img
               src={logoIntiCloud}
               alt="IntiCloud"
-              style={{ height: 80, width: 'auto', objectFit: 'contain', mixBlendMode: 'screen', display: 'block', marginBottom: 16 }}
+              style={{ height: 80, width: 'auto', objectFit: 'contain', filter: 'brightness(0) invert(1)', display: 'block', marginBottom: 16 }}
             />
             <p style={{ fontFamily: 'Manrope', fontSize: 14, color: '#4B5563', lineHeight: 1.7, maxWidth: 260 }}>
               Diseñamos y desarrollamos productos digitales modernos.

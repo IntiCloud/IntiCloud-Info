@@ -84,7 +84,6 @@ export default function Hero() {
                   height: isMobile ? 120 : 160,
                   width: 'auto',
                   objectFit: 'contain',
-                  mixBlendMode: 'multiply',
                   display: 'block',
                 }}
               />

@@ -46,7 +46,7 @@ export default function Navbar() {
             <img
               src={logoIntiCloud}
               alt="IntiCloud"
-              style={{ height: 52, width: 'auto', objectFit: 'contain', mixBlendMode: 'multiply', display: 'block' }}
+              style={{ height: 52, width: 'auto', objectFit: 'contain', display: 'block' }}
             />
           </a>
 
