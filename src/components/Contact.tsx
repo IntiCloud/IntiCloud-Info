@@ -144,10 +144,10 @@ export default function Contact() {
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {[
-                { label: 'Email', value: 'fabrize19lion@gmail.com', href: 'mailto:fabrize19lion@gmail.com' },
+                { label: 'Email', value: 'aguilaromaly@gmail.com', href: 'mailto:aguilaromaly@gmail.com' },
                 { label: 'Teléfono / WhatsApp', value: '+51 994 285 303', href: 'https://wa.me/51994285303' },
                 { label: 'GitHub', value: 'github.com/IntiCloud', href: 'https://github.com/IntiCloud' },
-                { label: 'LinkedIn — Fabrizio', value: 'linkedin.com/in/fabrizioleonp', href: 'https://www.linkedin.com/in/fabrizioleonp' },
+                { label: 'LinkedIn — Omaly', value: 'linkedin.com/in/omalyaguilardev', href: 'https://www.linkedin.com/in/omalyaguilardev/' },
               ].map(item => (
                 <a key={item.label} href={item.href} target="_blank" rel="noopener noreferrer"
                   style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 22px', background: '#F8F9FB', border: '1.5px solid #E5E7EB', borderRadius: 10, cursor: 'pointer', transition: 'border-color 0.2s', textDecoration: 'none' }}
