@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useParallax } from '../hooks/useParallax'
 import { useResponsive } from '../hooks/useResponsive'
-import logoIntiCloud from '../imports/LOGOINTICLOUD.png'
 
 const codeLines = [
   { indent: 0, content: 'const studio = {', color: '#E2E8F0' },
@@ -75,20 +74,6 @@ export default function Hero() {
         }}>
           {/* Left content */}
           <div style={{ animation: 'fadeUp 0.8s ease both' }}>
-            {/* Logo grande */}
-            <div style={{ marginBottom: 28 }}>
-              <img
-                src={logoIntiCloud}
-                alt="IntiCloud"
-                style={{
-                  height: isMobile ? 180 : 260,
-                  maxWidth: '100%',
-                  width: 'auto',
-                  objectFit: 'contain',
-                  display: 'block',
-                }}
-              />
-            </div>
             <div style={{
               display: 'inline-flex', alignItems: 'center', gap: 8,
               fontFamily: 'JetBrains Mono', fontSize: 10, fontWeight: 600,

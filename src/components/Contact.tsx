@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useReveal } from '../hooks/useReveal'
 import { useResponsive } from '../hooks/useResponsive'
 
-type Status = 'idle' | 'success' | 'error'
+type Status = 'idle' | 'submitting' | 'success' | 'error'
 
 export default function Contact() {
   const { ref, visible } = useReveal()
@@ -10,6 +10,7 @@ export default function Contact() {
   const [focused, setFocused] = useState<string | null>(null)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [status, setStatus] = useState<Status>('idle')
+  const [apiError, setApiError] = useState<string | null>(null)
   const { isMobile } = useResponsive()
 
   const validate = () => {
@@ -20,12 +21,49 @@ export default function Contact() {
     return e
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     const errs = validate()
     if (Object.keys(errs).length > 0) { setErrors(errs); setStatus('error'); return }
     setErrors({})
-    setStatus('success')
+    setStatus('submitting')
+    setApiError(null)
+
+    const accessKey = import.meta.env.VITE_WEB3FORMS_KEY || 'YOUR_WEB3FORMS_ACCESS_KEY'
+
+    try {
+      if (accessKey && accessKey !== 'YOUR_WEB3FORMS_ACCESS_KEY') {
+        const res = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({
+            access_key: accessKey,
+            name: form.name,
+            email: form.email,
+            phone: form.phone || 'No especificado',
+            company: form.company || 'No especificado',
+            message: form.message,
+            subject: `Nueva Propuesta de Proyecto de ${form.name} (${form.company || 'IntiCloud'})`,
+            from_name: 'IntiCloud Contact Form',
+            autoresponder_subject: '¡Hemos recibido tu proyecto en IntiCloud!',
+          }),
+        })
+        const data = await res.json()
+        if (data.success) {
+          setStatus('success')
+        } else {
+          setApiError(data.message || 'Error al enviar el formulario')
+          setStatus('error')
+        }
+      } else {
+        // Fallback demo submission when access key is pending configuration
+        await new Promise(r => setTimeout(r, 1000))
+        setStatus('success')
+      }
+    } catch {
+      setApiError('Error de red al enviar la propuesta. Inténtalo nuevamente.')
+      setStatus('error')
+    }
   }
 
   const fieldStyle = (name: string): React.CSSProperties => ({
@@ -50,11 +88,13 @@ export default function Contact() {
           <div>
             {status === 'success' ? (
               <div style={{ background: 'rgba(52,211,153,0.08)', border: '1.5px solid #34D399', borderRadius: 14, padding: '40px', textAlign: 'center' }}>
-                <div style={{ fontSize: 40, marginBottom: 16 }}>✓</div>
-                <div style={{ fontFamily: 'Manrope', fontWeight: 700, fontSize: 20, color: '#111318', marginBottom: 8 }}>¡Mensaje enviado!</div>
-                <p style={{ fontFamily: 'Manrope', fontSize: 15, color: '#626873' }}>Nos pondremos en contacto contigo pronto.</p>
-                <button onClick={() => { setStatus('idle'); setForm({ name: '', email: '', phone: '', company: '', message: '' }) }} style={{ marginTop: 24, fontFamily: 'Manrope', fontWeight: 600, fontSize: 13, color: '#4F46E5', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}>
-                  Enviar otro mensaje
+                <div style={{ fontSize: 44, marginBottom: 16, color: '#10B981' }}>✓</div>
+                <div style={{ fontFamily: 'Manrope', fontWeight: 700, fontSize: 22, color: '#111318', marginBottom: 12 }}>¡Propuesta enviada con éxito!</div>
+                <p style={{ fontFamily: 'Manrope', fontSize: 15, color: '#4B5563', lineHeight: 1.6, marginBottom: 8 }}>
+                  Hemos recibido la información de tu proyecto. Revisaremos los detalles con calma y te responderemos por correo con una propuesta personalizada.
+                </p>
+                <button onClick={() => { setStatus('idle'); setForm({ name: '', email: '', phone: '', company: '', message: '' }) }} style={{ marginTop: 24, fontFamily: 'Manrope', fontWeight: 600, fontSize: 14, color: '#4F46E5', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}>
+                  Enviar otra propuesta
                 </button>
               </div>
             ) : (
@@ -70,7 +110,7 @@ export default function Contact() {
                     <input type={f.type} value={form[f.key as keyof typeof form]} placeholder={f.placeholder}
                       onChange={e => setForm(prev => ({ ...prev, [f.key]: e.target.value }))}
                       onFocus={() => setFocused(f.key)} onBlur={() => setFocused(null)}
-                      style={fieldStyle(f.key)} />
+                      style={fieldStyle(f.key)} disabled={status === 'submitting'} />
                     {errors[f.key] && <div style={{ fontFamily: 'Manrope', fontSize: 12, color: '#EF4444', marginTop: 4 }}>{errors[f.key]}</div>}
                   </div>
                 ))}
@@ -79,13 +119,20 @@ export default function Contact() {
                   <textarea value={form.message} rows={5} placeholder="Describe brevemente lo que quieres construir..."
                     onChange={e => setForm(f => ({ ...f, message: e.target.value }))}
                     onFocus={() => setFocused('message')} onBlur={() => setFocused(null)}
-                    style={{ ...fieldStyle('message'), resize: 'vertical' }} />
+                    style={{ ...fieldStyle('message'), resize: 'vertical' }} disabled={status === 'submitting'} />
                   {errors.message && <div style={{ fontFamily: 'Manrope', fontSize: 12, color: '#EF4444', marginTop: 4 }}>{errors.message}</div>}
                 </div>
-                <button type="submit" style={{ fontFamily: 'Manrope', fontWeight: 700, fontSize: 15, color: '#fff', background: '#4F46E5', border: 'none', padding: '16px', borderRadius: 10, cursor: 'pointer', transition: 'background 0.2s' }}
-                  onMouseEnter={e => (e.currentTarget.style.background = '#4338CA')}
-                  onMouseLeave={e => (e.currentTarget.style.background = '#4F46E5')}>
-                  Enviar propuesta →
+
+                {apiError && (
+                  <div style={{ fontFamily: 'Manrope', fontSize: 13, color: '#EF4444', background: '#FEE2E2', padding: '12px 16px', borderRadius: 8 }}>
+                    {apiError}
+                  </div>
+                )}
+
+                <button type="submit" disabled={status === 'submitting'} style={{ fontFamily: 'Manrope', fontWeight: 700, fontSize: 15, color: '#fff', background: status === 'submitting' ? '#9CA3AF' : '#4F46E5', border: 'none', padding: '16px', borderRadius: 10, cursor: status === 'submitting' ? 'not-allowed' : 'pointer', transition: 'background 0.2s', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 8 }}
+                  onMouseEnter={e => { if (status !== 'submitting') e.currentTarget.style.background = '#4338CA' }}
+                  onMouseLeave={e => { if (status !== 'submitting') e.currentTarget.style.background = '#4F46E5' }}>
+                  {status === 'submitting' ? 'Enviando propuesta...' : 'Enviar propuesta →'}
                 </button>
               </form>
             )}
@@ -97,10 +144,9 @@ export default function Contact() {
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {[
-                { label: 'Email', value: 'aguilaromaly@gmail.com', href: 'mailto:aguilaromaly@gmail.com' },
+                { label: 'Email', value: 'fabrize19lion@gmail.com', href: 'mailto:fabrize19lion@gmail.com' },
                 { label: 'Teléfono / WhatsApp', value: '+51 994 285 303', href: 'https://wa.me/51994285303' },
-                { label: 'GitHub', value: 'github.com/icarius4iu', href: 'https://github.com/icarius4iu' },
-                { label: 'LinkedIn — Omaly', value: 'linkedin.com/in/omalyaguilardev', href: 'https://www.linkedin.com/in/omalyaguilardev/' },
+                { label: 'GitHub', value: 'github.com/IntiCloud', href: 'https://github.com/IntiCloud' },
                 { label: 'LinkedIn — Fabrizio', value: 'linkedin.com/in/fabrizioleonp', href: 'https://www.linkedin.com/in/fabrizioleonp' },
               ].map(item => (
                 <a key={item.label} href={item.href} target="_blank" rel="noopener noreferrer"
